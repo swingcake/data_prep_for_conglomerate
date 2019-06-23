@@ -51,6 +51,14 @@ def search_output(search):
         sleep(random.randint(3,11))
 
 
+http_proxy = 'http://503070370:Test$444user@Uproxyggn.sbic.sbicard.com:8080'
+https_proxy = 'https://503070370:Test$444user@Uproxyggn.sbic.sbicard.com:8080'
+
+proxies = {
+    'http'  : http_proxy,
+    'https'  : https_proxy
+}
+
 API_KEY = 'your_api_key_here'
 
 PLACES_URL = 'https://maps.googleapis.com/maps/api/place/textsearch/json?'
@@ -78,7 +86,7 @@ for search in search_query:
     request = PLACES_URL + search_req
 
     # Place request and store data in 'data'
-    result = requests.get(request)
+    result = requests.get(request, proxies=proxies, verify=False)
     data = result.json()
 
     status = data['status']
