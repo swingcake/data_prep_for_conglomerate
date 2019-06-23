@@ -1,7 +1,12 @@
+'''
+This is now deprecated. 
+'''
+
 import csv
 import time
 # import webbrowser
 from urllib.request import urlopen
+
 
 contents = []
 with open('url_file.csv', 'r') as csvfile:
