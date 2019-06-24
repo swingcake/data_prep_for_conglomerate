@@ -1,7 +1,7 @@
 import pandas as pd
 # import googlemaps
 import requests
-import csv
+# import csv
 # import pprint as pp
 from time import sleep
 import random
@@ -27,28 +27,11 @@ def search_output(search):
 
             f.write(name.replace(',', '') + ',' + address.replace(',', '') + ',' + str(latitude) + ',' + str(longitude) + '\n')
 
-            # rows = [
-                # data['results'][i]['name'],
-                # data['results'][i]['formatted_address'],
-                # data['results'][i]['geometry']['location']['lat'],
-                # data['results'][i]['geometry']['location']['lng']
-            # ]
-
-            # print(row[1])
-
-            # with open(filename, 'w', newline='') as f:
-                # writer = csv.writer(f)
-                # for row in rows:
-                    # writer.writerow(row)
-
-            # print(name)
-            # print(address)
-            # print(latitude)
-            # print(longitude)
-            # print('--')
         f.close()
 
-        sleep(random.randint(3,11))
+        print('File successfully saved for "{}".'.format(search))
+
+        sleep(random.randint(120, 150))
 
 
 http_proxy = 'http://503070370:Test$444user@Uproxyggn.sbic.sbicard.com:8080'
@@ -93,6 +76,9 @@ for search in search_query:
 
     if status == 'OK':
         search_output(search)
+    elif status == 'ZERO_RESULTS':
+        print('Zero results for "{}". Moving on..'.format(search))
+        sleep(random.randint(120, 150))
     elif status == 'OVER_QUERY_LIMIT':
         print('Hit query limit! Try after a while. Could not complete "{}".'.format(search))
         break
