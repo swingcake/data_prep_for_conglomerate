@@ -60,7 +60,7 @@ df = pd.read_csv('Merchant_Transaction.csv', usecols=[0, 1])
 
 # Construct search query
 search_query = df['Merchant_Name'].astype(str) + ' ' + df['City']
-search_query = search_query.str.replace(' ', '+')
+# search_query = search_query.str.replace(' ', '+')
 
 random.seed()
 
