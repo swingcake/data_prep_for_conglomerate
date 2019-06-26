@@ -15,7 +15,7 @@ def search_output(search):
 
         # Create csv file
         filename = search + '.csv'
-        f = open(filename, "w")
+        f = open(filename, 'w', encoding='utf-8')
 
         size_of_json = len(data['results'])
 
