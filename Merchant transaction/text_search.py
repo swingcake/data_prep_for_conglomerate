@@ -7,33 +7,6 @@ from time import sleep
 import random
 
 
-def search_output(search):
-    if len(data['results']) == 0:
-        print('No results found for {}.'.format(search))
-
-    else:
-
-        # Create csv file
-        filename = search + '.csv'
-        f = open(filename, 'w', encoding='utf-8')
-
-        size_of_json = len(data['results'])
-
-        for i in range(size_of_json):
-            name = data['results'][i]['name']
-            address = data['results'][i]['formatted_address']
-            latitude = data['results'][i]['geometry']['location']['lat']
-            longitude = data['results'][i]['geometry']['location']['lng']
-
-            f.write(name.replace(',', '') + ',' + address.replace(',', '') + ',' + str(latitude) + ',' + str(longitude) + '\n')
-
-        f.close()
-
-        print('File successfully saved for "{}".'.format(search))
-
-        sleep(random.randint(120, 150))
-
-
 http_proxy = 'http://503070370:Test$444user@Uproxyggn.sbic.sbicard.com:8080'
 https_proxy = 'https://503070370:Test$444user@Uproxyggn.sbic.sbicard.com:8080'
 
@@ -59,13 +32,13 @@ PLACES_URL = 'https://maps.googleapis.com/maps/api/place/textsearch/json?'
 df = pd.read_csv('Merchant_Transaction.csv', usecols=[0, 1])
 
 # Construct search query
-search_query = df['Merchant_Name'].astype(str) + ' ' + df['City']
+df['search_query'] = df['Merchant_Name'].astype(str) + ' ' + df['City']
 # search_query = search_query.str.replace(' ', '+')
 
 random.seed()
 
-for search in search_query:
-    search_req = 'query={}&key={}'.format(search, API_KEY)
+for row in df.itertuples():
+    search_req = 'query={}&key={}'.format(row.search_query, API_KEY)
     request = PLACES_URL + search_req
 
     # Place request and store data in 'data'
@@ -75,14 +48,38 @@ for search in search_query:
     status = data['status']
 
     if status == 'OK':
-        search_output(search)
+        size_of_result = len(data['results'])
+        
+        if size_of_result == 0:
+            print('No results found for {}.'.format(row.search_query))
+
+        else:
+
+            # Create csv file
+            filename = row.search_query + '.csv'
+            f = open(filename, 'w', encoding='utf-8')
+
+            for i in range(size_of_result):
+                name = data['results'][i]['name']
+                address = data['results'][i]['formatted_address']
+                latitude = data['results'][i]['geometry']['location']['lat']
+                longitude = data['results'][i]['geometry']['location']['lng']
+
+                f.write(row.Merchant_Name + ',' + row.City + ',' + name.replace(',', '') + ',' + address.replace(',', '') + ',' + str(latitude) + ',' + str(longitude) + ',' + str(size_of_result) + '\n')
+
+            f.close()
+
+            print('File successfully saved for "{}".'.format(row.search_query))
+
+            sleep(random.randint(120, 150))
+
     elif status == 'ZERO_RESULTS':
-        print('Zero results for "{}". Moving on..'.format(search))
+        print('Zero results for "{}". Moving on..'.format(row.search_query))
         sleep(random.randint(120, 150))
     elif status == 'OVER_QUERY_LIMIT':
-        print('Hit query limit! Try after a while. Could not complete "{}".'.format(search))
+        print('Hit query limit! Try after a while. Could not complete "{}".'.format(row.search_query))
         break
     else:
         print(status)
-        print('^ Status not okay, try again. Failed to complete "{}".'.format(search))
+        print('^ Status not okay, try again. Failed to complete "{}".'.format(row.search_query))
         break
