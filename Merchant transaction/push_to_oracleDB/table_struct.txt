@@ -1,0 +1,8 @@
+CREATE TABLE Merchant_Lat_Long(
+     Original_Name VARCHAR2(50)
+     Original_City VARCHAR2(50)
+     Google_Search_Name VARCHAR2(50)
+     Address VARCHAR2(200)
+     Latitude FLOAT
+     Longitude FLOAT
+);

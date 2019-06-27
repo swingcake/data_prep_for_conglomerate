@@ -1,0 +1,1 @@
+sqlldr userid=VoiceOfCustomer/Test$333user@172.16.24.83:1875/TRBINPRD control=C:\Merchant_Lat_Long\Merchant.ctl log=C:\Merchant_Lat_Long\Merchant.log bad=C:\Merchant_Lat_Long\Merchant.bad
