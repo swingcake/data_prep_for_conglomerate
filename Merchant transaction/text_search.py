@@ -19,6 +19,8 @@ API_KEY = 'your_api_key_here'
 
 PLACES_URL = 'https://maps.googleapis.com/maps/api/place/textsearch/json?'
 
+GEO_URL = 'https://maps.googleapis.com/maps/api/geocode/json?'
+
 
 # Don't know how to implement this using requests
     # Define client
@@ -70,7 +72,21 @@ for row in df.itertuples():
                 latitude = data['results'][i]['geometry']['location']['lat']
                 longitude = data['results'][i]['geometry']['location']['lng']
 
-                f.write(row.Merchant_Name + ',' + row.City + ',' + name.replace(',', '') + ',' + address.replace(',', '') + ',' + str(latitude) + ',' + str(longitude) + ',' + str(size_of_result) + '\n')
+                search_req2 = 'latlng={},{}&key={}'.format(latitude, longitude, API_KEY)
+                request2 = GEO_URL + search_req2
+                result2 = requests.get(request2)
+                data2 = result2.json()
+
+                if data2['status'] == 'OK':
+
+                    size_of_address = len(data2['results'][0]['address_components'])
+                    for j in range(size_of_address):
+                        if data2['results'][0]['address_components'][j]['types'][0] == 'postal_code':
+                            zip = data2['results'][0]['address_components'][j]['long_name']
+                        if data2['results'][0]['address_components'][j]['types'][0] == 'locality':
+                            city = data2['results'][0]['address_components'][j]['long_name']
+
+                f.write(row.Merchant_Name + ',' + row.City + ',' + name.replace(',', '') + ',' + address.replace(',', '') + ',' + str(latitude) + ',' + str(longitude) + ',' + str(size_of_result) + ',' + city + ',' + str(zip) + '\n')
 
             f.close()
 
