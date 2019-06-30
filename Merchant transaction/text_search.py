@@ -52,6 +52,7 @@ for row in df.itertuples():
         
         if size_of_result == 0:
             print('No results found for "{}".'.format(row.search_query))
+            sleep(random.randint(120, 150))
 
         elif size_of_result == 20:
             print('Number of results are 20 or more, skipping "{}" for now.'.format(row.search_query))
