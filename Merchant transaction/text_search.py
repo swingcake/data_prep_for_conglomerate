@@ -93,6 +93,7 @@ for row in df.itertuples():
                 # f.write(row.Merchant_Name + ',' + row.City + ',' + name.replace(',', '') + ',' + address.replace(',', '') + ',' + str(latitude) + ',' + str(longitude) + ',' + str(size_of_result) + ',' + city + ',' + str(zip) + '\n')
 
             df2.to_csv(filename, encoding='utf-8-sig', index=False, header=False)
+            df2 = df2.iloc[0:0]
 
             # f.close()
 
