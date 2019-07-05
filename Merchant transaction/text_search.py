@@ -88,7 +88,7 @@ for row in df.itertuples():
                         if data2['results'][0]['address_components'][j]['types'][0] == 'locality':
                             city = data2['results'][0]['address_components'][j]['long_name']
 
-                df2.loc[i] = [row.Merchant_Name] + [row.City] + [name] + [address] + [str(latitude)] + [str(longitude)] + [str(size_of_result)] + [zip] + [city]
+                df2.loc[i] = [row.Merchant_Name] + [row.City] + [name] + [address] + [latitude] + [longitude] + [size_of_result] + [zip] + [city]
 
                 # f.write(row.Merchant_Name + ',' + row.City + ',' + name.replace(',', '') + ',' + address.replace(',', '') + ',' + str(latitude) + ',' + str(longitude) + ',' + str(size_of_result) + ',' + city + ',' + str(zip) + '\n')
 
