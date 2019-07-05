@@ -33,6 +33,8 @@ GEO_URL = 'https://maps.googleapis.com/maps/api/geocode/json?'
 # Make dataframe
 df = pd.read_csv('Merchant_Transaction.csv', usecols=[0, 1])
 
+df2 = pd.DataFrame(columns=['orig_name', 'orig_city', 'name', 'address', 'latitude', 'longitude', 'no_of_results', 'zipcode', 'city'])
+
 # Construct search query
 df['search_query'] = df['Merchant_Name'].astype(str) + ' ' + df['City']
 # search_query = search_query.str.replace(' ', '+')
@@ -64,7 +66,7 @@ for row in df.itertuples():
 
             # Create csv file
             filename = row.search_query + '.csv'
-            f = open(filename, 'w', encoding='utf-8-sig')
+            # f = open(filename, 'w', encoding='utf-8-sig')
 
             for i in range(size_of_result):
                 name = data['results'][i]['name']
@@ -86,9 +88,13 @@ for row in df.itertuples():
                         if data2['results'][0]['address_components'][j]['types'][0] == 'locality':
                             city = data2['results'][0]['address_components'][j]['long_name']
 
-                f.write(row.Merchant_Name + ',' + row.City + ',' + name.replace(',', '') + ',' + address.replace(',', '') + ',' + str(latitude) + ',' + str(longitude) + ',' + str(size_of_result) + ',' + city + ',' + str(zip) + '\n')
+                df2.loc[i] = [row.Merchant_Name] + [row.City] + [name] + [address] + [str(latitude)] + [str(longitude)] + [str(size_of_result)] + [zip] + [city]
 
-            f.close()
+                # f.write(row.Merchant_Name + ',' + row.City + ',' + name.replace(',', '') + ',' + address.replace(',', '') + ',' + str(latitude) + ',' + str(longitude) + ',' + str(size_of_result) + ',' + city + ',' + str(zip) + '\n')
+
+            df2.to_csv(filename, encoding='utf-8-sig', index=False, header=False)
+
+            # f.close()
 
             print('File successfully saved for "{}".'.format(row.search_query))
 
