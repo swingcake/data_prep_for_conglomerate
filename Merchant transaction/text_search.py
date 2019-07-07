@@ -12,7 +12,7 @@ def output_tuple(row):
         str(row['geometry']['location']['lng'])
     )
 
-def search_output(search, results):
+def output_search_results(search, results):
     if len(results) == 0:
         print('No results found for {}.'.format(search))
     else:
@@ -60,7 +60,7 @@ for search in search_query:
     status = data['status']
 
     if status == 'OK':
-        search_output(search)
+        output_search_results(search, data['results'])
     elif status == 'ZERO_RESULTS':
         print('Zero results for "{}". Moving on..'.format(search))
         sleep(random.randint(120, 150))
