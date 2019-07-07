@@ -47,7 +47,7 @@ def output_search_results_with_new_writer(
         results: Iterable[Mapping[str, Any]], 
         next_token: str
 ) -> bool:
-    with open(search_name + '.csv', "w", newline='') as f:
+    with open(search_name + '.csv', 'w', encoding='utf-8', newline='') as f:
         return output_search_results(
                 csv.writer(f),
                 search_name, 
