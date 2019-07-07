@@ -4,6 +4,14 @@ import csv
 from time import sleep
 import random
 
+# Config
+proxies = {
+    'http': 'http://503070370:Test$444user@Uproxyggn.sbic.sbicard.com:8080',
+    'https': 'https://503070370:Test$444user@Uproxyggn.sbic.sbicard.com:8080',
+}
+API_KEY = 'your_api_key_here'
+PLACES_URL = 'https://maps.googleapis.com/maps/api/place/textsearch/json'
+
 def output_tuple(row):
     return (
         row['name'].replace(',', ''),
@@ -23,26 +31,12 @@ def output_search_results(search_name, results, writer):
         in results)
     print('File successfully saved for "{}".'.format(search_name))
 
-    sleep(random.randint(120, 150))
-
 def get_data(query):
     return requests.get(
         '{}?query={}&key={}'.format(PLACES_URL, query, API_KEY), 
         proxies=proxies, 
         verify=False
     ).json()
-
-http_proxy = 'http://503070370:Test$444user@Uproxyggn.sbic.sbicard.com:8080'
-https_proxy = 'https://503070370:Test$444user@Uproxyggn.sbic.sbicard.com:8080'
-
-proxies = {
-    'http'  : http_proxy,
-    'https'  : https_proxy
-}
-
-API_KEY = 'your_api_key_here'
-
-PLACES_URL = 'https://maps.googleapis.com/maps/api/place/textsearch/json'
 
 # Make dataframe
 df = pd.read_csv('Merchant_Transaction.csv', usecols=[0, 1])
@@ -63,6 +57,7 @@ for search in search_query:
             search,
             lambda w: output_search_results(search, data['results'], w)
         )
+        sleep(random.randint(120, 150))
     elif status == 'ZERO_RESULTS': # or !len(data['results]) ?
         print('Zero results for "{}". Moving on..'.format(search))
         sleep(random.randint(120, 150))
