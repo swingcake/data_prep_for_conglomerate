@@ -1,8 +1,6 @@
 import pandas as pd
-# import googlemaps
 import requests
 # import csv
-# import pprint as pp
 from time import sleep
 import random
 
@@ -10,10 +8,7 @@ import random
 def search_output(search):
     if len(data['results']) == 0:
         print('No results found for {}.'.format(search))
-
     else:
-
-        # Create csv file
         filename = search + '.csv'
         f = open(filename, "w")
 
@@ -33,7 +28,6 @@ def search_output(search):
 
         sleep(random.randint(120, 150))
 
-
 http_proxy = 'http://503070370:Test$444user@Uproxyggn.sbic.sbicard.com:8080'
 https_proxy = 'https://503070370:Test$444user@Uproxyggn.sbic.sbicard.com:8080'
 
@@ -45,15 +39,6 @@ proxies = {
 API_KEY = 'your_api_key_here'
 
 PLACES_URL = 'https://maps.googleapis.com/maps/api/place/textsearch/json?'
-
-
-# Don't know how to implement this using requests
-    # Define client
-    # gmaps = googlemaps.Client(key=API_KEY)
-
-    # Get the result through this function
-    # search_result = gmaps.places(query='Starbucks, Chicago')
-
 
 # Make dataframe
 df = pd.read_csv('Merchant_Transaction.csv', usecols=[0, 1])
