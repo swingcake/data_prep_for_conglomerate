@@ -20,7 +20,7 @@ def output_tuple(row):
     )
 
 def with_csv_writer(name, action):
-    with open(name + '.csv', "w") as f:
+    with open(name + '.csv', "w", newline='') as f:
         action(csv.writer(f))
 
 def output_search_results(search_name, results, writer):
