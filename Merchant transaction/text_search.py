@@ -12,8 +12,8 @@ def output_tuple(row):
         str(row['geometry']['location']['lng'])
     )
 
-def search_output(search):
-    if len(data['results']) == 0:
+def search_output(search, results):
+    if len(results) == 0:
         print('No results found for {}.'.format(search))
     else:
         filename = search + '.csv'
@@ -22,7 +22,7 @@ def search_output(search):
             file_writer.writerows(
                 output_tuple(row)
                 for row
-                in data['results'])
+                in results)
 
         print('File successfully saved for "{}".'.format(search))
 
