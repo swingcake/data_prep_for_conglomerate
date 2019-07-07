@@ -101,7 +101,7 @@ def handle_response(
 source_data = pd.read_csv('Merchant_Transaction.csv', usecols=[0, 1])
 
 for row in source_data:
-    search = "{}+{}".format(str(row['Merchant_Name']), df['City']).replace(' ', '+')
+    search = "{} {}".format(str(row['Merchant_Name']), df['City'])
 
     data = get_data(query = search)
     if handle_response(search, data):
