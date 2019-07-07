@@ -25,6 +25,13 @@ def output_search_results(search_name, results, writer):
 
     sleep(random.randint(120, 150))
 
+def get_data(query):
+    return requests.get(
+        '{}?query={}&key={}'.format(PLACES_URL, query, API_KEY), 
+        proxies=proxies, 
+        verify=False
+    ).json()
+
 http_proxy = 'http://503070370:Test$444user@Uproxyggn.sbic.sbicard.com:8080'
 https_proxy = 'https://503070370:Test$444user@Uproxyggn.sbic.sbicard.com:8080'
 
@@ -35,7 +42,7 @@ proxies = {
 
 API_KEY = 'your_api_key_here'
 
-PLACES_URL = 'https://maps.googleapis.com/maps/api/place/textsearch/json?'
+PLACES_URL = 'https://maps.googleapis.com/maps/api/place/textsearch/json'
 
 # Make dataframe
 df = pd.read_csv('Merchant_Transaction.csv', usecols=[0, 1])
@@ -47,12 +54,7 @@ search_query = search_query.str.replace(' ', '+')
 random.seed()
 
 for search in search_query:
-    search_req = 'query={}&key={}'.format(search, API_KEY)
-    request = PLACES_URL + search_req
-
-    # Place request and store data in 'data'
-    result = requests.get(request, proxies=proxies, verify=False)
-    data = result.json()
+    data = get_data(search)
 
     status = data['status']
 
