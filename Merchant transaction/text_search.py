@@ -23,10 +23,6 @@ def output_tuple(
         str(row['geometry']['location']['lng'])
     )
 
-def with_csv_writer(name: str, action: Callable)->None:
-    with open(name + '.csv', "w", newline='') as f:
-        action(csv.writer(f))
-
 def output_search_results(
         writer: csv.Writer, 
         search_name: str, 
