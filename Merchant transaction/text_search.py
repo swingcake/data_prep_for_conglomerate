@@ -34,11 +34,13 @@ def output_search_results(writer, search_name, results, next_token):
     
     if next_token:
         data = get_data(page = next_token)
-        handle_response(search_name, data, functools.partial(output_search_results, writer))
+        return handle_response(search_name, data, functools.partial(output_search_results, writer))
+    else:
+        return True
 
 def output_search_results_with_new_writer(search_name, results, next_token):
     with open(search_name + '.csv', "w", newline='') as f:
-        output_search_results(
+        return output_search_results(
                 csv.writer(f),
                 search_name, 
                 results, 
@@ -62,20 +64,23 @@ def handle_response(search_name, data, success_handler = output_search_results_w
     status = data['status']
 
     if status == 'OK' and len(data['results']):
-        success_handler(
+        return success_handler(
             search_name,
             data['results'], 
             data['next_page_token'] if 'next_page_token' in data else '', 
         )
     elif status == 'ZERO_RESULTS': # or !len(data['results]) ?
         print('Zero results for "{}". Moving on..'.format(search))
+        return True
     elif status == 'OVER_QUERY_LIMIT':
         print('Hit query limit! Try after a while. Could not complete "{}".'.format(search))
-        break
+        return False
     else:
         print(status)
         print('^ Status not okay, try again. Failed to complete "{}".'.format(search))
-        break
+        return False
+
+
 
 # Make dataframe
 source_data = pd.read_csv('Merchant_Transaction.csv', usecols=[0, 1])
@@ -84,8 +89,9 @@ for row in source_data:
     search = "{}+{}".format(str(row['Merchant_Name']), df['City']).replace(' ', '+')
 
     data = get_data(query = search)
-    handle_response(search, data)
-
-    sleep(150)
+    if handle_response(search, data):
+        sleep(150)
+    else:
+        break
 
 
