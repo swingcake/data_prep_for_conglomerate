@@ -2,6 +2,7 @@ import pandas as pd
 import requests
 import csv
 from time import sleep
+import functools
 
 # Config
 proxies = {
@@ -23,7 +24,7 @@ def with_csv_writer(name, action):
     with open(name + '.csv', "w", newline='') as f:
         action(csv.writer(f))
 
-def output_search_results(search_name, results, next_token, writer):
+def output_search_results(writer, search_name, results, next_token):
     writer.writerows(
         output_tuple(row)
         for row
@@ -33,6 +34,16 @@ def output_search_results(search_name, results, next_token, writer):
     
     if next_token:
         data = get_data(page = next_token)
+        handle_response(search_name, data, functools.partial(output_search_results, writer))
+
+def output_search_results_with_new_writer(search_name, results, next_token):
+    with open(search_name + '.csv', "w", newline='') as f:
+        output_search_results(
+                csv.writer(f),
+                search_name, 
+                results, 
+                next_token
+            )
 
 def get_data(query = '', page = ''):
     use_query = not page
@@ -47,22 +58,14 @@ def get_data(query = '', page = ''):
         verify=False
     ).json()
 
-# Make dataframe
-source_data = pd.read_csv('Merchant_Transaction.csv', usecols=[0, 1])
-
-for row in source_data:
-    search = "{}+{}".format(str(row['Merchant_Name']), df['City']).replace(' ', '+')
-
-    data = get_data(query = search)
+def handle_response(search_name, data, success_handler = output_search_results_with_new_writer):
     status = data['status']
 
     if status == 'OK' and len(data['results']):
-        with_csv_writer(
-            search,
-            lambda w: output_search_results(search, 
-                                            data['results'], 
-                                            data['next_page_token'] if 'next_page_token' in data else '', 
-                                            w)
+        success_handler(
+            search_name,
+            data['results'], 
+            data['next_page_token'] if 'next_page_token' in data else '', 
         )
     elif status == 'ZERO_RESULTS': # or !len(data['results]) ?
         print('Zero results for "{}". Moving on..'.format(search))
@@ -73,6 +76,15 @@ for row in source_data:
         print(status)
         print('^ Status not okay, try again. Failed to complete "{}".'.format(search))
         break
+
+# Make dataframe
+source_data = pd.read_csv('Merchant_Transaction.csv', usecols=[0, 1])
+
+for row in source_data:
+    search = "{}+{}".format(str(row['Merchant_Name']), df['City']).replace(' ', '+')
+
+    data = get_data(query = search)
+    handle_response(search, data)
 
     sleep(150)
 
