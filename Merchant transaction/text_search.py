@@ -23,12 +23,16 @@ def with_csv_writer(name, action):
     with open(name + '.csv', "w", newline='') as f:
         action(csv.writer(f))
 
-def output_search_results(search_name, results, writer):
+def output_search_results(search_name, results, next_token, writer):
     writer.writerows(
         output_tuple(row)
         for row
         in results)
-    print('File successfully saved for "{}".'.format(search_name))
+
+    print('Successfully wrote page for "{}".'.format(search_name))
+    
+    if next_token:
+        data = get_data(page = next_token)
 
 def get_data(query = '', page = ''):
     use_query = not page
@@ -55,7 +59,10 @@ for row in source_data:
     if status == 'OK' and len(data['results']):
         with_csv_writer(
             search,
-            lambda w: output_search_results(search, data['results'], w)
+            lambda w: output_search_results(search, 
+                                            data['results'], 
+                                            data['next_page_token'] if 'next_page_token' in data else '', 
+                                            w)
         )
     elif status == 'ZERO_RESULTS': # or !len(data['results]) ?
         print('Zero results for "{}". Moving on..'.format(search))
