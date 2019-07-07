@@ -44,16 +44,12 @@ def get_data(query = '', page = ''):
     ).json()
 
 # Make dataframe
-df = pd.read_csv('Merchant_Transaction.csv', usecols=[0, 1])
+source_data = pd.read_csv('Merchant_Transaction.csv', usecols=[0, 1])
 
-# Construct search query
-search_query = df['Merchant_Name'].astype(str) + ' ' + df['City']
-search_query = search_query.str.replace(' ', '+')
+for row in source_data:
+    search = "{}+{}".format(str(row['Merchant_Name']), df['City']).replace(' ', '+')
 
-
-for search in search_query:
     data = get_data(query = search)
-
     status = data['status']
 
     if status == 'OK' and len(data['results']):
