@@ -2,7 +2,6 @@ import pandas as pd
 import requests
 import csv
 from time import sleep
-import random
 
 # Config
 proxies = {
@@ -45,7 +44,6 @@ df = pd.read_csv('Merchant_Transaction.csv', usecols=[0, 1])
 search_query = df['Merchant_Name'].astype(str) + ' ' + df['City']
 search_query = search_query.str.replace(' ', '+')
 
-random.seed()
 
 for search in search_query:
     data = get_data(search)
@@ -57,10 +55,8 @@ for search in search_query:
             search,
             lambda w: output_search_results(search, data['results'], w)
         )
-        sleep(random.randint(120, 150))
     elif status == 'ZERO_RESULTS': # or !len(data['results]) ?
         print('Zero results for "{}". Moving on..'.format(search))
-        sleep(random.randint(120, 150))
     elif status == 'OVER_QUERY_LIMIT':
         print('Hit query limit! Try after a while. Could not complete "{}".'.format(search))
         break
@@ -68,3 +64,7 @@ for search in search_query:
         print(status)
         print('^ Status not okay, try again. Failed to complete "{}".'.format(search))
         break
+
+    sleep(150)
+
+
