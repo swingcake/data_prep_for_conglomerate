@@ -30,9 +30,15 @@ def output_search_results(search_name, results, writer):
         in results)
     print('File successfully saved for "{}".'.format(search_name))
 
-def get_data(query):
+def get_data(query = '', page = ''):
+    use_query = not page
     return requests.get(
-        '{}?query={}&key={}'.format(PLACES_URL, query, API_KEY), 
+        '{}?{}={}&key={}'.format(
+            PLACES_URL, 
+            'query' if use_query else 'pagetoken', 
+            query if use_query else page, 
+            API_KEY
+        ), 
         proxies=proxies, 
         verify=False
     ).json()
@@ -46,7 +52,7 @@ search_query = search_query.str.replace(' ', '+')
 
 
 for search in search_query:
-    data = get_data(search)
+    data = get_data(query = search)
 
     status = data['status']
 
