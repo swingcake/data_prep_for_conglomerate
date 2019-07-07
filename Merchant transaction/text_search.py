@@ -1,28 +1,24 @@
 import pandas as pd
 import requests
-# import csv
+import csv
 from time import sleep
 import random
-
 
 def search_output(search):
     if len(data['results']) == 0:
         print('No results found for {}.'.format(search))
     else:
         filename = search + '.csv'
-        f = open(filename, "w")
+        with open(filename, "w") as f:
+            size_of_json = len(data['results'])
 
-        size_of_json = len(data['results'])
+            for i in range(size_of_json):
+                name = data['results'][i]['name']
+                address = data['results'][i]['formatted_address']
+                latitude = data['results'][i]['geometry']['location']['lat']
+                longitude = data['results'][i]['geometry']['location']['lng']
 
-        for i in range(size_of_json):
-            name = data['results'][i]['name']
-            address = data['results'][i]['formatted_address']
-            latitude = data['results'][i]['geometry']['location']['lat']
-            longitude = data['results'][i]['geometry']['location']['lng']
-
-            f.write(name.replace(',', '') + ',' + address.replace(',', '') + ',' + str(latitude) + ',' + str(longitude) + '\n')
-
-        f.close()
+                f.write(name.replace(',', '') + ',' + address.replace(',', '') + ',' + str(latitude) + ',' + str(longitude) + '\n')
 
         print('File successfully saved for "{}".'.format(search))
 
