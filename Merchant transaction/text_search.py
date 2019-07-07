@@ -12,21 +12,18 @@ def output_tuple(row):
         str(row['geometry']['location']['lng'])
     )
 
-def output_search_results(search, results):
-    if len(results) == 0:
-        print('No results found for {}.'.format(search))
-    else:
-        filename = search + '.csv'
-        with open(filename, "w") as f:
-            file_writer = csv.writer(f)
-            file_writer.writerows(
-                output_tuple(row)
-                for row
-                in results)
+def with_csv_writer(name, action):
+    with open(name + '.csv', "w") as f:
+        action(csv.writer(f))
 
-        print('File successfully saved for "{}".'.format(search))
+def output_search_results(search_name, results, writer):
+    writer.writerows(
+        output_tuple(row)
+        for row
+        in results)
+    print('File successfully saved for "{}".'.format(search_name))
 
-        sleep(random.randint(120, 150))
+    sleep(random.randint(120, 150))
 
 http_proxy = 'http://503070370:Test$444user@Uproxyggn.sbic.sbicard.com:8080'
 https_proxy = 'https://503070370:Test$444user@Uproxyggn.sbic.sbicard.com:8080'
@@ -59,9 +56,12 @@ for search in search_query:
 
     status = data['status']
 
-    if status == 'OK':
-        output_search_results(search, data['results'])
-    elif status == 'ZERO_RESULTS':
+    if status == 'OK' and len(data['results']):
+        with_csv_writer(
+            search,
+            lambda w: output_search_results(search, data['results'], w)
+        )
+    elif status == 'ZERO_RESULTS': # or !len(data['results]) ?
         print('Zero results for "{}". Moving on..'.format(search))
         sleep(random.randint(120, 150))
     elif status == 'OVER_QUERY_LIMIT':
