@@ -3,6 +3,7 @@ import requests
 import csv
 from time import sleep
 import functools
+from typing import Any, Callable, Iterable, Mapping, Tuple
 
 # Config
 proxies = {
@@ -12,7 +13,9 @@ proxies = {
 API_KEY = 'your_api_key_here'
 PLACES_URL = 'https://maps.googleapis.com/maps/api/place/textsearch/json'
 
-def output_tuple(row):
+def output_tuple(
+        row: Mapping[str, Any]
+) -> Tuple[str, str, str, str]:
     return (
         row['name'].replace(',', ''),
         row['formatted_address'].replace(',', ''),
@@ -20,11 +23,16 @@ def output_tuple(row):
         str(row['geometry']['location']['lng'])
     )
 
-def with_csv_writer(name, action):
+def with_csv_writer(name: str, action: Callable)->None:
     with open(name + '.csv', "w", newline='') as f:
         action(csv.writer(f))
 
-def output_search_results(writer, search_name, results, next_token):
+def output_search_results(
+        writer: csv.Writer, 
+        search_name: str, 
+        results: Iterable[Mapping[str, Any]], 
+        next_token: str
+) -> bool:
     writer.writerows(
         output_tuple(row)
         for row
@@ -38,7 +46,11 @@ def output_search_results(writer, search_name, results, next_token):
     else:
         return True
 
-def output_search_results_with_new_writer(search_name, results, next_token):
+def output_search_results_with_new_writer(
+        search_name: str, 
+        results: Iterable[Mapping[str, Any]], 
+        next_token: str
+) -> bool:
     with open(search_name + '.csv', "w", newline='') as f:
         return output_search_results(
                 csv.writer(f),
@@ -47,7 +59,10 @@ def output_search_results_with_new_writer(search_name, results, next_token):
                 next_token
             )
 
-def get_data(query = '', page = ''):
+def get_data(
+        query: str = '', 
+        page: str = ''
+) -> Mapping[str, Any]:
     use_query = not page
     return requests.get(
         '{}?{}={}&key={}'.format(
@@ -60,7 +75,11 @@ def get_data(query = '', page = ''):
         verify=False
     ).json()
 
-def handle_response(search_name, data, success_handler = output_search_results_with_new_writer):
+def handle_response(
+        search_name: str, 
+        data: Mapping[str, Any], 
+        success_handler: Callable[[str, Iterable[Mapping[str, Any]], str], bool] = output_search_results_with_new_writer
+) -> bool:
     status = data['status']
 
     if status == 'OK' and len(data['results']):
