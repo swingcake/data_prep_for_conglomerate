@@ -4,21 +4,25 @@ import csv
 from time import sleep
 import random
 
+def output_tuple(row):
+    return (
+        row['name'].replace(',', ''),
+        row['formatted_address'].replace(',', ''),
+        str(row['geometry']['location']['lat']),
+        str(row['geometry']['location']['lng'])
+    )
+
 def search_output(search):
     if len(data['results']) == 0:
         print('No results found for {}.'.format(search))
     else:
         filename = search + '.csv'
         with open(filename, "w") as f:
-            size_of_json = len(data['results'])
-
-            for i in range(size_of_json):
-                name = data['results'][i]['name']
-                address = data['results'][i]['formatted_address']
-                latitude = data['results'][i]['geometry']['location']['lat']
-                longitude = data['results'][i]['geometry']['location']['lng']
-
-                f.write(name.replace(',', '') + ',' + address.replace(',', '') + ',' + str(latitude) + ',' + str(longitude) + '\n')
+            file_writer = csv.writer(f)
+            file_writer.writerows(
+                output_tuple(row)
+                for row
+                in data['results'])
 
         print('File successfully saved for "{}".'.format(search))
 
