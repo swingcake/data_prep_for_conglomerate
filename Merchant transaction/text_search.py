@@ -12,28 +12,36 @@ proxies = {
 }
 API_KEY = 'your_api_key_here'
 PLACES_URL = 'https://maps.googleapis.com/maps/api/place/textsearch/json'
+GEO_URL = 'https://maps.googleapis.com/maps/api/geocode/json'
 
 def output_tuple(
         row: Mapping[str, Any],
-        search_name: Tuple[str, str]
-) -> Tuple[str, str, str, str, str, str]:
+        search_name: Tuple[str, str],
+        city_and_zip: Tuple[str, str]
+) -> Tuple[str, str, str, str, str, str, str, str]:
     return (
         search_name[0].replace(',', ''),
         search_name[1].replace(',', ''),
         row['name'].replace(',', ''),
         row['formatted_address'].replace(',', ''),
         str(row['geometry']['location']['lat']),
-        str(row['geometry']['location']['lng'])
+        str(row['geometry']['location']['lng']),
+        city_and_zip[0].replace(',', ''),
+        city_and_zip[1].replace(',', '')
     )
 
 def output_search_results(
         writer: csv.Writer, 
-        search_name: Tuple[str], 
+        search_name: Tuple[str, str], 
         results: Iterable[Mapping[str, Any]], 
         next_token: str
 ) -> bool:
     writer.writerows(
-        output_tuple(row)
+        output_tuple(
+            row, 
+            search_name, 
+            get_better_city_and_zip(row['geometry']['location']['lat'], row['geometry']['location']['lng'])
+        )
         for row
         in results)
 
@@ -52,11 +60,11 @@ def output_search_results_with_new_writer(
 ) -> bool:
     with open('{}_{}.csv'.format(*search_name), 'w', encoding='utf-8-sig', newline='') as f:
         return output_search_results(
-                csv.writer(f),
-                search_name, 
-                results, 
-                next_token
-            )
+            csv.writer(f),
+            search_name, 
+            results, 
+            next_token
+        )
 
 def get_data(
         query: str = '', 
@@ -76,6 +84,22 @@ def get_data(
         proxies=proxies, 
         verify=False
     ).json()
+
+def get_better_city_and_zip(
+        latitude: float,
+        longitude: float
+) -> Tuple[str, str]:
+    data = get_data(latitude = str(latitude), longitude = str(longitude), url = GEO_URL)
+    if data['status'] == 'OK':
+        try:
+            address = {
+                item['types'][0]: item['long_name']
+                for item
+                in data['results'][0]['address_components']
+            }
+            return (address['locality'], address['postal_code'])
+        except (KeyError, IndexError) as _:
+            return ('', '')
 
 def handle_response(
         search_name: Tuple[str, str], 
