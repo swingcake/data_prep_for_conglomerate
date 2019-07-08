@@ -50,7 +50,7 @@ def output_search_results_with_new_writer(
         results: Iterable[Mapping[str, Any]], 
         next_token: str
 ) -> bool:
-    with open('{}_{}.csv'.format(*search_name), 'w', encoding='utf-8', newline='') as f:
+    with open('{}_{}.csv'.format(*search_name), 'w', encoding='utf-8-sig', newline='') as f:
         return output_search_results(
                 csv.writer(f),
                 search_name, 
