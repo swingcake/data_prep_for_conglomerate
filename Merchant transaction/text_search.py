@@ -40,7 +40,7 @@ def output_search_results(
     print('Successfully wrote page for "{}, {}".'.format(*search_name))
     
     if next_token:
-        data = get_data(page = next_token)
+        data = get_data(page = next_token)65d623059af08d23066104e4f3bf2659f4732900
         return handle_response(search_name, data, functools.partial(output_search_results, writer))
     else:
         return True
@@ -60,16 +60,19 @@ def output_search_results_with_new_writer(
 
 def get_data(
         query: str = '', 
-        page: str = ''
+        page: str = '',
+        latitude: str = '',
+        longitude: str = '',
+        url: str = PLACES_URL
 ) -> Mapping[str, Any]:
-    use_query = not page
+    key = 'query'
+        if query
+        else ('pagetoken' if page else 'latlng')
+    value = query
+        if query
+        else (page if page else '{},{}'.format(latitude, longitude))
     return requests.get(
-        '{}?{}={}&key={}'.format(
-            PLACES_URL, 
-            'query' if use_query else 'pagetoken', 
-            query if use_query else page, 
-            API_KEY
-        ), 
+        '{}?{}={}&key={}'.format(url, key, value, API_KEY), 
         proxies=proxies, 
         verify=False
     ).json()
