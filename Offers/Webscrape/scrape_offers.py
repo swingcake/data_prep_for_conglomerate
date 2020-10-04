@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 
 driver = webdriver.Chrome("C:\chromedriver_win32\chromedriver.exe")
-driver.get('https://www.sbicard.com/en/personal/offers.page#all-offers')
+driver.get('https://www.multinational_conglomeratecard.com/en/personal/offers.page#all-offers')
 
 # html parsing
 page_soup = BeautifulSoup(driver.page_source, 'lxml')

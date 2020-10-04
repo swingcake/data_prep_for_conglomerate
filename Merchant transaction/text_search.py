@@ -7,8 +7,8 @@ from time import sleep
 import random
 
 
-http_proxy = 'http://503070370:Test$444user@Uproxyggn.sbic.sbicard.com:8080'
-https_proxy = 'https://503070370:Test$444user@Uproxyggn.sbic.sbicard.com:8080'
+http_proxy = 'http://user:pass@host'
+https_proxy = 'https://user:pass@host'
 
 proxies = {
     'http'  : http_proxy,
@@ -111,3 +111,4 @@ for row in df.itertuples():
         print(status)
         print('^ Status not okay, try again. Failed to complete "{}".'.format(row.search_query))
         break
+    

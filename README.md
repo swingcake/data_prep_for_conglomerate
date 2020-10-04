@@ -1,3 +1,5 @@
-## Data prep for SBI Card
+# Data prep for a multinational conglomerate*
 
-This repo mostly contains the scripts and automation used to ease data prepping for our project. It will be updated with the same with time.
+This repository mostly contains the scripts and automation used to ease data prepping for our project.
+
+*Some part(s) may be redacted to comply with the privacy policy.
