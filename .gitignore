@@ -1,4 +1,4 @@
 # Exclude file backups
 
 *.backup
-Merchant\ transaction/Merchant_Transaction.csv
+Merchant*transaction/Merchant_Transaction.csv
